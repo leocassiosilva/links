@@ -1,16 +1,19 @@
-import {Text, View } from 'react-native';
-
+import {Text, View, Image, TouchableOpacity} from 'react-native';
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { styles } from './styles';
+import { colors } from '@/styles/colors';
 
 
 export default function Index() { 
     return (
     <View style={styles.container}>
-
-        <Text style={styles.title}>Bem-vindo ao React Native!</Text>
-        <Text style={styles.title}>Este é o seu ponto de partida.</Text>
-        <Text style={styles.title}>Explore e comece a construir seu aplicativo.</Text>
+        <View style={styles.header}>
+            <Image source={require("@/assets/logo.png")} style={styles.logo}/>
+            <TouchableOpacity activeOpacity={0.7}>  
+                <MaterialIcons name='add' size={32} color={colors.green[300]} />
+            </TouchableOpacity>
+        </View>
     </View>
 
     );
