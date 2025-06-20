@@ -14,8 +14,9 @@ export default function Index() {
                 <MaterialIcons name='add' size={32} color={colors.green[300]} />
             </TouchableOpacity>
         </View>
-        <Category name="Projeto" icon="code" />
-        <Category name="Teste" icon="code" />
+        <Category name="Projeto" icon="code" isSlected/>
+        <Category name="Site" icon="language" isSlected={false}/>
+        <Category name="Video" icon="movie" isSlected={false}/>
     </View>
 
     );
