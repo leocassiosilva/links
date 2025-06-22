@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Alert} from "react-native";
 import { styles } from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { colors } from "@/styles/colors";
@@ -9,11 +9,26 @@ import { Input } from "@/components/input";
 import { Button } from "@/components/button";
 
 export default function Add() {
+  
+  const [ category, setCategory ] = useState("");
   const [ name, setName ] = useState(""); 
   const [ url, setUrl ] = useState("");
 
   function handleAdd() {
-    console.log("Add item with name:", name, "and url:", url);
+    if (!category){
+      return Alert.alert("Atenção", "Selecione uma categoria");
+    }
+
+    if (!name.trim()){
+      return Alert.alert("Atenção", "Informe um nome");
+    }
+
+    if (!url.trim()){
+      return Alert.alert("Atenção", "Informe uma URL");
+    }
+
+    console.log({ category, name, url });
+    Alert.alert("Sucesso", "Link adicionado com sucesso!");
 
   }
 
@@ -28,8 +43,8 @@ export default function Add() {
         <Text style={styles.title}>Novo</Text>
       </View>
 
-      <Text style={styles.label}>Selecione uma categoria</Text>
-      <Categories />
+      <Text >Selecione uma categoria</Text>
+      <Categories onChange={setCategory} selected={category}/>
       <View style={styles.form}>
         <Input placeholder="Nome" onChangeText={setName} autoCorrect={false}/>
         <Input placeholder="Url" onChangeText={setUrl} autoCorrect={false}/>
