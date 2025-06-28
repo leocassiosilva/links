@@ -10,8 +10,8 @@ import { Link } from '@/components/link';
 
 import { Option } from '@/components/option';
 
-import { router } from "expo-router";
-import { useState, useEffect} from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useState, useCallback} from "react";
 import { linkStorage, LinksStorage } from '@/storage/link-storage';
 
 
@@ -30,10 +30,14 @@ export default function Index() {
         } 
     }
 
-    useEffect(() => {
-        getLinks()
-    }, [category])
-
+    // useEffect(() => {
+    //     getLinks()
+    // }, [category])
+    useFocusEffect(
+        useCallback(() => {
+            getLinks()
+        }, [])
+    )
 
     return (
     <View style={styles.container}>
