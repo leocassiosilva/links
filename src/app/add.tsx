@@ -7,6 +7,8 @@ import { router } from "expo-router";
 import { Categories } from "@/components/categories";
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
+import { linkStorage } from '@/storage/link-storage';
+import uuid from 'react-native-uuid';
 
 export default function Add() {
   
@@ -14,22 +16,38 @@ export default function Add() {
   const [ name, setName ] = useState(""); 
   const [ url, setUrl ] = useState("");
 
-  function handleAdd() {
-    if (!category){
-      return Alert.alert("Atenção", "Selecione uma categoria");
+  async function handleAdd() {
+    try {
+      if (!category){
+        return Alert.alert("Atenção", "Selecione uma categoria");
+      }
+
+      if (!name.trim()){
+        return Alert.alert("Atenção", "Informe um nome");
+      }
+
+      if (!url.trim()){
+        return Alert.alert("Atenção", "Informe uma URL");
+      }
+
+      await linkStorage.save({ 
+          id: uuid.v4(),
+          name,
+          url,
+          category,
+        })
+
+
+      const data = await linkStorage.get()
+      console.log(data);
+
+
+
+
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro", "Não foi possível adicionar o link");
     }
-
-    if (!name.trim()){
-      return Alert.alert("Atenção", "Informe um nome");
-    }
-
-    if (!url.trim()){
-      return Alert.alert("Atenção", "Informe uma URL");
-    }
-
-    console.log({ category, name, url });
-    Alert.alert("Sucesso", "Link adicionado com sucesso!");
-
   }
 
 

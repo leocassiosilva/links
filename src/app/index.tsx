@@ -13,7 +13,6 @@ import { Option } from '@/components/option';
 import { router } from "expo-router";
 import { useState } from "react";
 
-
 export default function Index() { 
     const [ category, setCategory ] = useState("");
     
