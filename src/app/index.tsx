@@ -1,4 +1,4 @@
-import {Text, View, Image, Alert,TouchableOpacity, FlatList, Modal} from 'react-native';
+import {Text, View, Image, Alert,TouchableOpacity, FlatList, Modal, Linking} from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { styles } from './styles';
@@ -17,9 +17,12 @@ import { linkStorage, LinksStorage } from '@/storage/link-storage';
 
 
 export default function Index() { 
+    const [showModal, setShowModal] = useState(false)
     const [ category, setCategory ] = useState("")
     const [ links, setLinks ] = useState<LinksStorage[]>([])
-    
+    const [link,setLink] = useState<LinksStorage>({} as LinksStorage)
+
+
     async function getLinks() {
         try{
             const response = await linkStorage.get()
@@ -36,6 +39,43 @@ export default function Index() {
         } 
     }
 
+    function handleDetails(selected: LinksStorage) {
+        setShowModal(true)
+        setLink(selected)
+    }
+
+    async function linkRemove() {
+        try {
+            await linkStorage.remove(link.id)
+            setShowModal(false)
+            getLinks()
+            Alert.alert("Sucesso", "Link excluído com sucesso!");
+        }catch (error) {
+            Alert.alert("Erro", "Não foi possível excluir o link");
+            console.error(error);
+
+        }
+    }
+
+    function handleRemove() {
+        Alert.alert("Atenção", "Deseja excluir esse link?", [
+            { style: "cancel", text: "Não" },
+            { text: "Sim", onPress: () => linkRemove() }  
+        ]);
+    }
+
+    async function handleOpenLink() {
+        try {
+            await Linking.openURL(link.url)
+            setShowModal(false)
+        } catch (error) {
+            Alert.alert("Erro", "Não foi possível abrir o link");
+            console.error(error);
+        }
+    }
+
+
+        
     // useEffect(() => {
     //     getLinks()
     // }, [category])
@@ -61,32 +101,34 @@ export default function Index() {
             data={links}
             keyExtractor={(item) => item.id}
             renderItem={({item}) => (
-                <Link name={item.name} url={item.url} onDetails={() => console.log("Clicou!")} />
+                <Link name={item.name} url={item.url} onDetails={() => handleDetails(item)} />
             
             )}
             style={styles.links}
             contentContainerStyle={styles.linksContent}
             showsVerticalScrollIndicator={false}
         /> 
-        <Modal visible={false}> 
+        <Modal visible={showModal} animationType='slide' transparent={true}> 
             <View style={styles.modal}>
                 <View style={styles.modalContent}>
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalCategory}> 
-                            Curso
+                            {link.category}
                         </Text>
-                        <MaterialIcons name='close' size={24} color={colors.gray[400]}/>  
+                        <TouchableOpacity onPress={() => setShowModal(false)}>
+                            <MaterialIcons name='close' size={24} color={colors.gray[400]}/>  
+                        </TouchableOpacity>
                     </View>
                     <Text style={styles.modalLinkName}> 
-                        Rocketseat
+                        {link.name}
                     </Text>
                     <Text style={styles.modalUrl}> 
-                        https://rocketseat.com.br
+                        {link.url}
                     </Text>
 
                     <View style={styles.modalFooter}> 
-                        <Option name="Excluir" icon="delete" variant="secondary" onPress={() => console.log("Excluir")} />
-                        <Option name="Abrir" icon="language" onPress={() => console.log("Abrir")} />
+                        <Option name="Excluir" icon="delete" variant="secondary" onPress={handleRemove} />
+                        <Option name="Abrir" icon="web" onPress={handleOpenLink} />
                     </View>
 
 

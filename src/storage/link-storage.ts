@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { linkTo } from "expo-router/build/global-state/routing";
 
 const LINK_STORAGE_KEY = "links-storage";
 
@@ -28,4 +29,16 @@ async function save(newLink: LinksStorage[]) {
 }
 
 
-export const linkStorage = {get, save}
+async function remove(id: string) {
+    try{
+        const storage = await get()
+        const updated = storage.filter((link) => link.id !== id)
+        await AsyncStorage.setItem(LINK_STORAGE_KEY, JSON.stringify(updated))
+
+
+    }catch (error) {
+        throw error;
+    }
+}
+
+export const linkStorage = {get, save,  remove}
